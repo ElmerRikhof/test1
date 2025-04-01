@@ -1,25 +1,29 @@
 trigger:
-- '*'
+- main  # Runs the pipeline when code is pushed to the main branch
 
 pool:
-  vmImage: 'ubuntu-20.04'
+  vmImage: 'ubuntu-20.04'  # Use the latest Ubuntu VM image
 
 variables:
-  buildConfiguration: 'Release'
+  javaVersion: '17'  # Define Java version
+  mavenVersion: '3.8.6'  # Define Maven version
 
 steps:
+# Install JDK
 - task: JavaToolInstaller@0
-  displayName: 'Install JDK 17'
+  displayName: 'Install JDK $(javaVersion)'
   inputs:
-    version: '17'
+    version: '$(javaVersion)'
     jdkArchitecture: 'x64'
 
+# Restore dependencies
 - task: Maven@3
   displayName: 'Restore dependencies'
   inputs:
     mavenPomFile: 'pom.xml'
     goals: 'clean'
 
+# Build the Java project
 - task: Maven@3
   displayName: 'Build the project'
   inputs:
@@ -27,12 +31,14 @@ steps:
     goals: 'package'
     options: '-DskipTests'
 
+# Run unit tests
 - task: Maven@3
   displayName: 'Run Tests'
   inputs:
     mavenPomFile: 'pom.xml'
     goals: 'test'
 
+# Copy JAR file to staging directory
 - task: CopyFiles@2
   displayName: 'Copy JAR file to staging'
   inputs:
@@ -40,8 +46,10 @@ steps:
     Contents: '*.jar'
     TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
+# Publish build artifacts
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: drop'
   inputs:
     pathToPublish: '$(Build.ArtifactStagingDirectory)'
     artifactName: 'drop'
+
