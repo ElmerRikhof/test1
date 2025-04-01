@@ -53,3 +53,11 @@ steps:
     pathToPublish: '$(Build.ArtifactStagingDirectory)'
     artifactName: 'drop'
 
+# 🚀 **Deploy to Azure App Service**
+- task: AzureWebApp@1
+  displayName: 'Deploy to Azure App Service'
+  inputs:
+    azureSubscription: 'Your-Service-Connection'  # Replace with your Azure Service Connection name
+    appName: 'YourAppName'  # Replace with your App Service name
+    package: '$(Build.ArtifactStagingDirectory)/*.jar'
+
