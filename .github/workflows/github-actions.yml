@@ -1,42 +1,29 @@
-name: Java CI/CD Pipeline
+name: Java CI
 
 on:
   push:
     branches:
-      - main  # Run on push to the main branch
+      - main  # Runs when code is pushed to main
   pull_request:
     branches:
-      - main  # Run on pull requests targeting main
+      - main  # Runs on pull requests to main
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # Uses the latest Ubuntu runner
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v3  # Gets your code
 
-      - name: Set up JDK 17
+      - name: Set Up Java
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Cache Maven dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-maven-
+          distribution: 'temurin'  # Eclipse Temurin JDK (recommended)
+          java-version: '17'       # Use Java 17
 
       - name: Build with Maven
-        run: mvn clean package -DskipTests
+        run: mvn clean package -DskipTests  # Builds the project, skipping tests
 
       - name: Run Tests
-        run: mvn test
-
-      - name: Upload JAR Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: java-app
-          path: target/*.jar
+        run: mvn test  # Runs unit tests
