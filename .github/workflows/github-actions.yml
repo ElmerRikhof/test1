@@ -27,3 +27,4 @@ jobs:
 
       - name: Run Tests
         run: mvn test  # Runs unit tests
+        continue-on-error: false  # Ensures the pipeline fails if tests fail
