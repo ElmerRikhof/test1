@@ -16,6 +16,14 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3  # Gets your code
 
+      - name: Cache Maven dependencies
+        uses: actions/cache@v2  # Correct version for caching
+        with:
+          path: ~/.m2/repository  # Cache the Maven dependencies
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}  # Key to uniquely identify the cache
+          restore-keys: |
+            ${{ runner.os }}-maven-  # Restore the cache even if the key changes slightly
+
       - name: Set Up Java
         uses: actions/setup-java@v3
         with:
@@ -27,4 +35,3 @@ jobs:
 
       - name: Run Tests
         run: mvn test  # Runs unit tests
-        continue-on-error: false  # Ensures the pipeline fails if tests fail
